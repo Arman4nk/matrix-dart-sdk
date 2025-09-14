@@ -109,25 +109,25 @@ class CallSession {
   bool _missedCall = true;
 
   final CachedStreamController<CallSession> onCallStreamsChanged =
-      CachedStreamController();
+  CachedStreamController();
 
   final CachedStreamController<CallSession> onCallReplaced =
-      CachedStreamController();
+  CachedStreamController();
 
   final CachedStreamController<CallSession> onCallHangupNotifierForGroupCalls =
-      CachedStreamController();
+  CachedStreamController();
 
   final CachedStreamController<CallState> onCallStateChanged =
-      CachedStreamController();
+  CachedStreamController();
 
   final CachedStreamController<CallStateChange> onCallEventChanged =
-      CachedStreamController();
+  CachedStreamController();
 
   final CachedStreamController<WrappedMediaStream> onStreamAdd =
-      CachedStreamController();
+  CachedStreamController();
 
   final CachedStreamController<WrappedMediaStream> onStreamRemoved =
-      CachedStreamController();
+  CachedStreamController();
 
   SDPStreamMetadata? _remoteSDPStreamMetadata;
   final List<RTCRtpSender> _usermediaSenders = [];
@@ -147,7 +147,7 @@ class CallSession {
 
   WrappedMediaStream? get localUserMediaStream {
     final stream = getLocalStreams.where(
-      (element) => element.purpose == SDPStreamMetadataPurpose.Usermedia,
+          (element) => element.purpose == SDPStreamMetadataPurpose.Usermedia,
     );
     if (stream.isNotEmpty) {
       return stream.first;
@@ -157,7 +157,7 @@ class CallSession {
 
   WrappedMediaStream? get localScreenSharingStream {
     final stream = getLocalStreams.where(
-      (element) => element.purpose == SDPStreamMetadataPurpose.Screenshare,
+          (element) => element.purpose == SDPStreamMetadataPurpose.Screenshare,
     );
     if (stream.isNotEmpty) {
       return stream.first;
@@ -167,7 +167,7 @@ class CallSession {
 
   WrappedMediaStream? get remoteUserMediaStream {
     final stream = getRemoteStreams.where(
-      (element) => element.purpose == SDPStreamMetadataPurpose.Usermedia,
+          (element) => element.purpose == SDPStreamMetadataPurpose.Usermedia,
     );
     if (stream.isNotEmpty) {
       return stream.first;
@@ -177,7 +177,7 @@ class CallSession {
 
   WrappedMediaStream? get remoteScreenSharingStream {
     final stream = getRemoteStreams.where(
-      (element) => element.purpose == SDPStreamMetadataPurpose.Screenshare,
+          (element) => element.purpose == SDPStreamMetadataPurpose.Screenshare,
     );
     if (stream.isNotEmpty) {
       return stream.first;
@@ -196,8 +196,8 @@ class CallSession {
     return localUserMediaVideoTrack != null &&
         transceivers.singleWhereOrNull(
               (transceiver) =>
-                  transceiver.sender.track?.id == localUserMediaVideoTrack.id,
-            ) !=
+          transceiver.sender.track?.id == localUserMediaVideoTrack.id,
+        ) !=
             null;
   }
 
@@ -216,19 +216,19 @@ class CallSession {
 
   // incoming call
   Future<void> initWithInvite(
-    CallType type,
-    RTCSessionDescription offer,
-    SDPStreamMetadata? metadata,
-    int lifetime,
-    bool isGroupCall,
-  ) async {
+      CallType type,
+      RTCSessionDescription offer,
+      SDPStreamMetadata? metadata,
+      int lifetime,
+      bool isGroupCall,
+      ) async {
     if (!isGroupCall) {
       // glare fixes
       final prevCallId = voip.incomingCallRoomId[room.id];
       if (prevCallId != null) {
         // This is probably an outbound call, but we already have a incoming invite, so let's terminate it.
         final prevCall =
-            voip.calls[VoipId(roomId: room.id, callId: prevCallId)];
+        voip.calls[VoipId(roomId: room.id, callId: prevCallId)];
         if (prevCall != null) {
           if (prevCall._inviteOrAnswerSent) {
             Logs().d('[glare] invite or answer sent, lex compare now');
@@ -288,7 +288,7 @@ class CallSession {
         Logs().v('[VOIP] Call invite has expired. Hanging up.');
 
         fireCallEvent(CallStateChange.kHangup);
-        hangup(reason: CallErrorCode.inviteTimeout);
+        unawaited(hangup(reason: CallErrorCode.inviteTimeout));
       }
       _ringingTimer?.cancel();
       _ringingTimer = null;
@@ -351,9 +351,9 @@ class CallSession {
   }
 
   Future<void> placeCallWithStreams(
-    List<WrappedMediaStream> callFeeds, {
-    bool requestScreenSharing = false,
-  }) async {
+      List<WrappedMediaStream> callFeeds, {
+        bool requestScreenSharing = false,
+      }) async {
     // create the peer connection now so it can be gathering candidates while we get user
     // media (assuming a candidate pool size is configured)
     await _preparePeerConnection();
@@ -364,9 +364,9 @@ class CallSession {
   }
 
   Future<void> gotCallFeedsForInvite(
-    List<WrappedMediaStream> callFeeds, {
-    bool requestScreenSharing = false,
-  }) async {
+      List<WrappedMediaStream> callFeeds, {
+        bool requestScreenSharing = false,
+      }) async {
     if (_successor != null) {
       await _successor!.gotCallFeedsForAnswer(callFeeds);
       return;
@@ -394,9 +394,9 @@ class CallSession {
   }
 
   Future<void> onAnswerReceived(
-    RTCSessionDescription answer,
-    SDPStreamMetadata? metadata,
-  ) async {
+      RTCSessionDescription answer,
+      SDPStreamMetadata? metadata,
+      ) async {
     if (metadata != null) {
       _updateRemoteSDPStreamMetadata(metadata);
     }
@@ -420,9 +420,9 @@ class CallSession {
   }
 
   Future<void> onNegotiateReceived(
-    SDPStreamMetadata? metadata,
-    RTCSessionDescription description,
-  ) async {
+      SDPStreamMetadata? metadata,
+      RTCSessionDescription description,
+      ) async {
     final polite = direction == CallDirection.kIncoming;
 
     // Here we follow the perfect negotiation logic from
@@ -615,12 +615,12 @@ class CallSession {
   }
 
   Future<void> addLocalStream(
-    MediaStream stream,
-    String purpose, {
-    bool addToPeerConnection = true,
-  }) async {
+      MediaStream stream,
+      String purpose, {
+        bool addToPeerConnection = true,
+      }) async {
     final existingStream =
-        getLocalStreams.where((element) => element.purpose == purpose);
+    getLocalStreams.where((element) => element.purpose == purpose);
     if (existingStream.isNotEmpty) {
       existingStream.first.setNewStream(stream);
     } else {
@@ -668,21 +668,23 @@ class CallSession {
   Future<void> _addRemoteStream(MediaStream stream) async {
     //final userId = remoteUser.id;
     final metadata = _remoteSDPStreamMetadata?.sdpStreamMetadatas[stream.id];
+
+    // Don't drop streams without metadata - use defaults instead
+    // This fixes Android-to-Web calls where Android doesn't always send metadata
+    final purpose = metadata?.purpose ?? SDPStreamMetadataPurpose.Usermedia;
+    final audioMuted = metadata?.audio_muted ?? false;
+    final videoMuted = metadata?.video_muted ?? false;
+
     if (metadata == null) {
       Logs().i(
-        'Ignoring stream with id ${stream.id} because we didn\'t get any metadata about it',
+        'Stream ${stream.id} has no metadata - using defaults (purpose: $purpose, audioMuted: $audioMuted, videoMuted: $videoMuted)',
       );
-      return;
     }
-
-    final purpose = metadata.purpose;
-    final audioMuted = metadata.audio_muted;
-    final videoMuted = metadata.video_muted;
 
     // Try to find a feed with the same purpose as the new stream,
     // if we find it replace the old stream with the new one
     final existingStream =
-        getRemoteStreams.where((element) => element.purpose == purpose);
+    getRemoteStreams.where((element) => element.purpose == purpose);
     if (existingStream.isNotEmpty) {
       existingStream.first.setNewStream(stream);
     } else {
@@ -721,7 +723,7 @@ class CallSession {
 
   Future<void> deleteFeedByStream(MediaStream stream) async {
     final index =
-        _streams.indexWhere((element) => element.stream!.id == stream.id);
+    _streams.indexWhere((element) => element.stream!.id == stream.id);
     if (index == -1) {
       Logs().w('Didn\'t find the feed with stream id ${stream.id} to delete');
       return;
@@ -799,8 +801,8 @@ class CallSession {
         // to be replaced anyway.
         final transceivers = await pc!.getTransceivers();
         transceivers.removeWhere(
-          (transceiver) =>
-              transceiver.sender.track == null ||
+              (transceiver) =>
+          transceiver.sender.track == null ||
               (localScreenSharingStream != null &&
                   localScreenSharingStream!.stream != null &&
                   localScreenSharingStream!.stream!
@@ -814,7 +816,7 @@ class CallSession {
         // - new video track gets added
         for (final newTrack in streamTracks) {
           final transceiver = transceivers.singleWhereOrNull(
-            (transceiver) => transceiver.sender.track!.kind == newTrack.kind,
+                (transceiver) => transceiver.sender.track!.kind == newTrack.kind,
           );
           if (transceiver != null) {
             Logs().d(
@@ -824,7 +826,7 @@ class CallSession {
             await oldSender.replaceTrack(newTrack);
             await transceiver.setDirection(
               await transceiver.getDirection() ==
-                      TransceiverDirection.Inactive // upgrade, send now
+                  TransceiverDirection.Inactive // upgrade, send now
                   ? TransceiverDirection.SendOnly
                   : TransceiverDirection.SendRecv,
             );
@@ -960,7 +962,7 @@ class CallSession {
     await terminate(CallParty.kLocal, reason, shouldEmit);
     try {
       final res =
-          await sendHangupCall(room, callId, localPartyId, 'userHangup');
+      await sendHangupCall(room, callId, localPartyId, 'userHangup');
       Logs().v('[VOIP] hangup res => $res');
     } catch (e) {
       Logs().v('[VOIP] hangup error => ${e.toString()}');
@@ -980,10 +982,10 @@ class CallSession {
   }
 
   Future<void> terminate(
-    CallParty party,
-    CallErrorCode reason,
-    bool shouldEmit,
-  ) async {
+      CallParty party,
+      CallErrorCode reason,
+      bool shouldEmit,
+      ) async {
     if (state == CallState.kConnected) {
       await hangup(
         reason: CallErrorCode.userHangup,
@@ -1043,7 +1045,7 @@ class CallSession {
     // No need to check party_id for reject because if we'd received either
     // an answer or reject, we wouldn't be in state InviteSent
     final shouldTerminate = (state == CallState.kFledgling &&
-            direction == CallDirection.kIncoming) ||
+        direction == CallDirection.kIncoming) ||
         CallState.kInviteSent == state ||
         CallState.kRinging == state;
 
@@ -1117,7 +1119,7 @@ class CallSession {
 
       _inviteTimer = Timer(CallTimeouts.callInviteLifetime, () {
         if (state == CallState.kInviteSent) {
-          hangup(reason: CallErrorCode.inviteTimeout);
+          unawaited(hangup(reason: CallErrorCode.inviteTimeout));
         }
         _inviteTimer?.cancel();
         _inviteTimer = null;
@@ -1173,7 +1175,7 @@ class CallSession {
         final delay = direction == CallDirection.kIncoming ? 500 : 2000;
         if (_candidateSendTries == 0) {
           Timer(Duration(milliseconds: delay), () {
-            _sendCandidateQueue();
+            unawaited(_sendCandidateQueue());
           });
         }
       };
@@ -1249,10 +1251,10 @@ class CallSession {
 
   Future<void> updateMuteStatus() async {
     final micShouldBeMuted = (localUserMediaStream != null &&
-            localUserMediaStream!.isAudioMuted()) ||
+        localUserMediaStream!.isAudioMuted()) ||
         _remoteOnHold;
     final vidShouldBeMuted = (localUserMediaStream != null &&
-            localUserMediaStream!.isVideoMuted()) ||
+        localUserMediaStream!.isVideoMuted()) ||
         _remoteOnHold;
 
     _setTracksEnabled(
@@ -1350,9 +1352,9 @@ class CallSession {
   }
 
   Future<void> createDataChannel(
-    String label,
-    RTCDataChannelInit dataChannelDict,
-  ) async {
+      String label,
+      RTCDataChannelInit dataChannelDict,
+      ) async {
     await pc?.createDataChannel(label, dataChannelDict);
   }
 
@@ -1424,7 +1426,7 @@ class CallSession {
 
       final delay = 500 * pow(2, _candidateSendTries);
       Timer(Duration(milliseconds: delay as int), () {
-        _sendCandidateQueue();
+        unawaited(_sendCandidateQueue());
       });
     }
   }
@@ -1499,17 +1501,17 @@ class CallSession {
   /// intended for any member of the room other than the sender of the event.
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   Future<String?> sendInviteToCall(
-    Room room,
-    String callId,
-    int lifetime,
-    String party_id,
-    String sdp, {
-    String type = 'offer',
-    String version = voipProtoVersion,
-    String? txid,
-    CallCapabilities? capabilities,
-    SDPStreamMetadata? metadata,
-  }) async {
+      Room room,
+      String callId,
+      int lifetime,
+      String party_id,
+      String sdp, {
+        String type = 'offer',
+        String version = voipProtoVersion,
+        String? txid,
+        CallCapabilities? capabilities,
+        SDPStreamMetadata? metadata,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1519,7 +1521,7 @@ class CallSession {
       'offer': {'sdp': sdp, 'type': type},
       if (remoteUserId != null)
         'invitee':
-            remoteUserId!, // TODO: rename this to invitee_user_id? breaks spec though
+        remoteUserId!, // TODO: rename this to invitee_user_id? breaks spec though
       if (remoteDeviceId != null) 'invitee_device_id': remoteDeviceId!,
       if (remoteDeviceId != null)
         'device_id': client
@@ -1545,13 +1547,13 @@ class CallSession {
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   /// [selected_party_id] The party ID for the selected answer.
   Future<String?> sendSelectCallAnswer(
-    Room room,
-    String callId,
-    String party_id,
-    String selected_party_id, {
-    String version = voipProtoVersion,
-    String? txid,
-  }) async {
+      Room room,
+      String callId,
+      String party_id,
+      String selected_party_id, {
+        String version = voipProtoVersion,
+        String? txid,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1575,12 +1577,12 @@ class CallSession {
   /// [version] is the version of the VoIP specification this message adheres to. This specification is version 1.
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   Future<String?> sendCallReject(
-    Room room,
-    String callId,
-    String party_id, {
-    String version = voipProtoVersion,
-    String? txid,
-  }) async {
+      Room room,
+      String callId,
+      String party_id, {
+        String version = voipProtoVersion,
+        String? txid,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1602,17 +1604,17 @@ class CallSession {
   /// [version] is the version of the VoIP specification this message adheres to. This specification is version 1.
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   Future<String?> sendCallNegotiate(
-    Room room,
-    String callId,
-    int lifetime,
-    String party_id,
-    String sdp, {
-    String type = 'offer',
-    String version = voipProtoVersion,
-    String? txid,
-    CallCapabilities? capabilities,
-    SDPStreamMetadata? metadata,
-  }) async {
+      Room room,
+      String callId,
+      int lifetime,
+      String party_id,
+      String sdp, {
+        String type = 'offer',
+        String version = voipProtoVersion,
+        String? txid,
+        CallCapabilities? capabilities,
+        SDPStreamMetadata? metadata,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1654,13 +1656,13 @@ class CallSession {
   ///   ],
   /// ```
   Future<String?> sendCallCandidates(
-    Room room,
-    String callId,
-    String party_id,
-    List<Map<String, dynamic>> candidates, {
-    String version = voipProtoVersion,
-    String? txid,
-  }) async {
+      Room room,
+      String callId,
+      String party_id,
+      List<Map<String, dynamic>> candidates, {
+        String version = voipProtoVersion,
+        String? txid,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1685,16 +1687,16 @@ class CallSession {
   /// [sdp] The SDP text of the session description.
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   Future<String?> sendAnswerCall(
-    Room room,
-    String callId,
-    String sdp,
-    String party_id, {
-    String type = 'answer',
-    String version = voipProtoVersion,
-    String? txid,
-    CallCapabilities? capabilities,
-    SDPStreamMetadata? metadata,
-  }) async {
+      Room room,
+      String callId,
+      String sdp,
+      String party_id, {
+        String type = 'answer',
+        String version = voipProtoVersion,
+        String? txid,
+        CallCapabilities? capabilities,
+        SDPStreamMetadata? metadata,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1717,13 +1719,13 @@ class CallSession {
   /// [version] is the version of the VoIP specification this message adheres to. This specification is version 1.
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   Future<String?> sendHangupCall(
-    Room room,
-    String callId,
-    String party_id,
-    String? hangupCause, {
-    String version = voipProtoVersion,
-    String? txid,
-  }) async {
+      Room room,
+      String callId,
+      String party_id,
+      String? hangupCause, {
+        String version = voipProtoVersion,
+        String? txid,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1754,13 +1756,13 @@ class CallSession {
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   /// [metadata] The sdp_stream_metadata object.
   Future<String?> sendSDPStreamMetadataChanged(
-    Room room,
-    String callId,
-    String party_id,
-    SDPStreamMetadata metadata, {
-    String version = voipProtoVersion,
-    String? txid,
-  }) async {
+      Room room,
+      String callId,
+      String party_id,
+      SDPStreamMetadata metadata, {
+        String version = voipProtoVersion,
+        String? txid,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1785,13 +1787,13 @@ class CallSession {
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   /// [callReplaces] transfer info
   Future<String?> sendCallReplaces(
-    Room room,
-    String callId,
-    String party_id,
-    CallReplaces callReplaces, {
-    String version = voipProtoVersion,
-    String? txid,
-  }) async {
+      Room room,
+      String callId,
+      String party_id,
+      CallReplaces callReplaces, {
+        String version = voipProtoVersion,
+        String? txid,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1816,13 +1818,13 @@ class CallSession {
   /// [party_id] The party ID for call, Can be set to client.deviceId.
   /// [assertedIdentity] the asserted identity
   Future<String?> sendAssertedIdentity(
-    Room room,
-    String callId,
-    String party_id,
-    AssertedIdentity assertedIdentity, {
-    String version = voipProtoVersion,
-    String? txid,
-  }) async {
+      Room room,
+      String callId,
+      String party_id,
+      AssertedIdentity assertedIdentity, {
+        String version = voipProtoVersion,
+        String? txid,
+      }) async {
     final content = {
       'call_id': callId,
       'party_id': party_id,
@@ -1841,11 +1843,11 @@ class CallSession {
   }
 
   Future<String?> _sendContent(
-    Room room,
-    String type,
-    Map<String, Object> content, {
-    String? txid,
-  }) async {
+      Room room,
+      String type,
+      Map<String, Object> content, {
+        String? txid,
+      }) async {
     Logs().d('[VOIP] sending content type $type, with conf: $content');
     txid ??= VoIP.customTxid ?? client.generateUniqueTransactionId();
     final mustEncrypt = room.encrypted && client.encryptionEnabled;
@@ -1891,7 +1893,7 @@ class CallSession {
     } else {
       final sendMessageContent = mustEncrypt
           ? await client.encryption!
-              .encryptGroupMessagePayload(room.id, content, type: type)
+          .encryptGroupMessagePayload(room.id, content, type: type)
           : content;
       return await client.sendMessage(
         room.id,
