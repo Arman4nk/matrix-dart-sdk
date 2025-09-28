@@ -962,7 +962,7 @@ class CallSession {
     await terminate(CallParty.kLocal, reason, shouldEmit);
     try {
       final res =
-      await sendHangupCall(room, callId, localPartyId, 'userHangup');
+        await sendHangupCall(room, callId, localPartyId, 'user_hangup');
       Logs().v('[VOIP] hangup res => $res');
     } catch (e) {
       Logs().v('[VOIP] hangup error => ${e.toString()}');
