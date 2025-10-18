@@ -121,14 +121,12 @@ class MatrixWidget {
 
     return Uri.parse(parsedUri);
   }
-
+  
   Map<String, dynamic> toJson() => {
-        'creatorUserId': creatorUserId,
-        'data': data,
-        'id': id,
-        'name': name,
-        'type': type,
-        'url': url,
-        'waitForIframeLoad': waitForIframeLoad,
-      };
+    'data': data,
+    'name': name,
+    'type': type,
+    'url': url,
+  };
 }
+
