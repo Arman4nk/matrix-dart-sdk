@@ -4,6 +4,7 @@ library;
 import 'package:matrix/matrix.dart';
 
 export 'src/widget.dart';
+import 'dart:math';
 
 extension MatrixWidgets on Room {
   /// Returns all present Widgets in the room.
@@ -17,10 +18,19 @@ extension MatrixWidgets on Room {
         }
       }).toList();
 
-    Future<String> addWidget(MatrixWidget widget) {
+
+  String randomString(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final random = Random();
+
+    return List.generate(length, (index) => chars[random.nextInt(chars.length)]).join();
+  }
+
+
+  Future<String> addWidget(MatrixWidget widget) {
     final user = client.userID;
     final widgetId =
-    randomString(24);
+        randomString(24);
 
     final json = widget.toJson();
     json['creatorUserId'] = user;
